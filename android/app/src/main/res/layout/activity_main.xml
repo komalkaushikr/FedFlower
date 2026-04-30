@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    FedFlower — Main Activity Layout
+    
+    Screen layout:
+    ┌────────────────────────────┐
+    │  🌸 FedFlower              │  ← Title bar
+    │  Flower Species ID         │
+    ├────────────────────────────┤
+    │                            │
+    │   [Flower Image Here]      │  ← ImageView (shows selected photo)
+    │                            │
+    ├────────────────────────────┤
+    │  [📷 Take Photo] [📁 Upload]│  ← Two action buttons
+    ├────────────────────────────┤
+    │  ⏳ (Loading spinner)      │  ← Visible during inference
+    ├────────────────────────────┤
+    │  🌸 Rose                   │  ← Top prediction
+    │  Confidence: 94.2%         │  ← Scores for top 3
+    │  2nd: Sunflower (3.1%)     │
+    │  3rd: Daisy (1.8%)         │
+    │  ⚡ 87ms on-device         │  ← Inference time
+    └────────────────────────────┘
+-->
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ── Header ─────────────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp"
+            android:background="@drawable/bg_header"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🌸 FedFlower"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Flower Species Identification"
+                android:textSize="14sp"
+                android:textColor="#E0E0E0"
+                android:layout_marginTop="4dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="102 species · On-device AI · No internet needed"
+                android:textSize="12sp"
+                android:textColor="#B0BEC5"
+                android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+        <!-- ── Flower Image Preview ────────────────────────────────────── -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
+
+            <ImageView
+                android:id="@+id/iv_flower"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_flower"
+                android:contentDescription="Selected flower photo"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── Action Buttons ──────────────────────────────────────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/btn_camera"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="📷 Take Photo"
+                android:textSize="14sp"
+                android:backgroundTint="#2E7D32"
+                android:textColor="#FFFFFF"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+            <Button
+                android:id="@+id/btn_gallery"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="📁 Upload Photo"
+                android:textSize="14sp"
+                android:backgroundTint="#1565C0"
+                android:textColor="#FFFFFF"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+        </LinearLayout>
+
+        <!-- ── Loading Spinner ─────────────────────────────────────────── -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- ── Results Card ────────────────────────────────────────────── -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/layout_results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IDENTIFIED SPECIES"
+                    android:textSize="11sp"
+                    android:textColor="#90A4AE"
+                    android:letterSpacing="0.1"
+                    android:textStyle="bold"/>
+
+                <!-- Primary prediction -->
+                <TextView
+                    android:id="@+id/tv_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#1B5E20"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- Confidence scores -->
+                <TextView
+                    android:id="@+id/tv_confidence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="14sp"
+                    android:textColor="#455A64"
+                    android:lineSpacingExtra="4dp"/>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#ECEFF1"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <!-- Inference time -->
+                <TextView
+                    android:id="@+id/tv_inference"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="12sp"
+                    android:textColor="#90A4AE"/>
+
+                <!-- Privacy note -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔒 Federated learning model — photo never leaves your device"
+                    android:textSize="11sp"
+                    android:textColor="#90A4AE"
+                    android:layout_marginTop="4dp"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- ── Info Card ───────────────────────────────────────────────── -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Point your camera at any flower or upload a photo from your gallery. The AI model identifies from 102 species trained on the Oxford Flowers dataset using privacy-preserving Federated Learning."
+                android:textSize="13sp"
+                android:textColor="#78909C"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>
