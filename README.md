@@ -1,18 +1,18 @@
 
-#  FedFlower — Flower Species Recognition with Federated Learning
+#  FedFlower - Flower Species Recognition with Federated Learning
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1-red.svg)](https://pytorch.org)
 [![Android](https://img.shields.io/badge/Android-API%2024+-green.svg)](https://developer.android.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A complete end-to-end machine learning system that identifies **102 flower species** from photos — trained using **Federated Learning** so raw images never leave any device — and deployed as an **Android app** with fully on-device inference. No internet required.
+A complete end-to-end machine learning system that identifies **102 flower species** from photos - trained using **Federated Learning** so raw images never leave any device - and deployed as an **Android app** with fully on-device inference. No internet required.
 
 ---
 
 ##  Why Federated Learning?
 
-Traditional machine learning centralizes all training data on one server. This is a privacy risk — flower photos can contain GPS metadata, home locations, personal surroundings.
+Traditional machine learning centralizes all training data on one server. This is a privacy risk - flower photos can contain GPS metadata, home locations, personal surroundings.
 
 **FedFlower solves this:**
 
@@ -20,12 +20,12 @@ Traditional machine learning centralizes all training data on one server. This i
 Traditional:
   Device 1 → sends all photos →
   Device 2 → sends all photos → Central Server trains → Global Model
-  ❌ All raw data exposed on one server
+   **All raw data exposed on one server**
 
 FedFlower:
   Device 1 → trains locally → sends only WEIGHTS →
   Device 2 → trains locally → sends only WEIGHTS → Server averages → Global Model
-  ✅ Raw photos NEVER leave any device
+   Raw photos NEVER leave any device
 ```
 
 ---
@@ -37,7 +37,7 @@ FedFlower:
 | Top-1 Accuracy | **89.04%** | **~83%** |
 | Macro F1-Score | 0.886 | ~0.82 |
 | Training Time | ~25 minutes | ~50 minutes |
-| Privacy | ❌ Data centralized | ✅ Data stays local |
+| Privacy |  Data centralized |  Data stays local |
 | Accuracy Gap | — | Only ~6% below centralized |
 
 > The 6% accuracy gap is the price of privacy. Raw photos never left any client device during training.
@@ -48,7 +48,7 @@ FedFlower:
 
 ![Accuracy Comparison](results/comparison.png)
 
-The federated model closely tracks centralized accuracy across 10 rounds — proving federated learning works with minimal accuracy cost.
+The federated model closely tracks centralized accuracy across 10 rounds - proving federated learning works with minimal accuracy cost.
 
 ---
 
@@ -56,11 +56,11 @@ The federated model closely tracks centralized accuracy across 10 rounds — pro
 
 ![Grad-CAM Results](results/gradcam_results.png)
 
-Grad-CAM heatmaps show which pixels influenced each prediction. Red = model focused here. The model correctly focuses on petals, stamens, and color patterns — not backgrounds.
+Grad-CAM heatmaps show which pixels influenced each prediction. Red = model focused here. The model correctly focuses on petals, stamens, and color patterns - not backgrounds.
 
 ---
 
-## 📉 Per-Class Accuracy
+##  Per-Class Accuracy
 
 ![Per Class Accuracy](results/per_class_accuracy.png)
 
@@ -138,7 +138,7 @@ FedFlower/
 
 1. Open `android/` in Android Studio
 2. Copy `flower_traced.pt` into `android/app/src/main/assets/`
-3. Connect phone → click **Run ▶**
+3. Connect phone → click **Run **
 
 ---
 
@@ -159,7 +159,7 @@ FedFlower/
 
 ##  License
 
-MIT License — free to use, modify, and distribute with attribution.
+MIT License - free to use, modify, and distribute with attribution.
 
 ---
 
