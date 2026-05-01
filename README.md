@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-# 🌸 FedFlower — Flower Species Recognition with Federated Learning
+
+#  FedFlower — Flower Species Recognition with Federated Learning
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1-red.svg)](https://pytorch.org)
