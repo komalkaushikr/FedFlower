@@ -164,7 +164,3 @@ MIT License - free to use, modify, and distribute with attribution.
 ---
 
 <p align="center">Built with PyTorch · Federated Learning · Android · Oxford 102 Flowers</p>
-=======
-# FedFlower
-Flower species recognition using CNN and Federated Learning-Android app with on-device inference
->>>>>>> 7f1e828185ba7327006e40c5221f49dd3e26b8be
