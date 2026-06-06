@@ -1,4 +1,4 @@
-# 🌸 FedFlower — Decentralized Flower Species Recognition with Federated Learning
+# FedFlower: Federated Fine-Tuning for Decentralized On-Device Flower Species Recognition
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue) ![PyTorch](https://img.shields.io/badge/PyTorch-2.1-orange) ![Android](https://img.shields.io/badge/Android-Java-green) ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
