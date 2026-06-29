@@ -6,7 +6,7 @@ An end-to-end machine learning system that identifies **102 flower species** fro
 
 ---
 
-## Why Federated Learning?
+## Why Federated Learning
 
 Traditional ML requires storing the entire training dataset on a single server. As datasets grow into hundreds of gigabytes, this becomes expensive and hard to scale. FedFlower distributes both **data storage and training** across multiple clients — each client holds only its own subset, and the server never stores raw images.
 
