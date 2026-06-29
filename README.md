@@ -108,6 +108,8 @@ FedFlower/
 | Android App | Java, Android Studio |
 
 ---
+## Future work
+   non-IID data, where each contributor holds different species
 
 ## License
 
