@@ -108,8 +108,25 @@ FedFlower/
 | Android App | Java, Android Studio |
 
 ---
-## Future work
-   non-IID data, where each contributor holds different species
+## Limitations & Future Work
+
+This implementation assumes each client holds a roughly similar
+distribution of flower classes. Real deployments won't look like this —
+contributors are tied to a region, garden, or collector, so each may hold
+an almost entirely different set of species. This causes severe **non-IID /
+label skew**, where some classes live on a single client. Under FedAvg this
+leads to client drift, slower convergence, and poor accuracy on rare classes.
+
+Planned improvements:
+
+- **Handle non-IID data** — test under Dirichlet label partitions and swap
+  FedAvg for drift-aware aggregation (FedProx, SCAFFOLD, MOON).
+- **Personalization** — per-client fine-tuning so each contributor keeps a
+  model tuned to their local flora.
+- **Communication efficiency** — compress/quantize ResNet50 updates (~25M
+  params) for edge contributors.
+- **Privacy** — add secure aggregation + differential privacy.
+- **Open-set recognition** — flag unseen species instead of forcing a known label.
 
 ## License
 
