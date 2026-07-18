@@ -3,11 +3,6 @@
 ## Stack
 ResNet50 + Transfer Learning, Oxford 102 Flowers, PyTorch, FedAvg, Google Colab, Android (PyTorch Mobile)
 
-## Confirmed results
-- best_model.pth = 89.04% Top-1 accuracy on 6,149 test images
-- Dataset: 1,020 train + 1,020 val = 2,040 for federated split. 6,149 test = never touched.
-- Phase 2 ran and showed 93.5% federated accuracy (because it fine-tuned ON TOP of best_model.pth, not from scratch — this is intentional and documented)
-
 ## Architecture
 - Model: ResNet50 pretrained on ImageNet, final FC layer replaced for 102 classes
 - Aggregation: FedAvg — global = weighted average of client weights by data size
