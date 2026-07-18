@@ -2,13 +2,13 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue) ![PyTorch](https://img.shields.io/badge/PyTorch-2.1-orange) ![Android](https://img.shields.io/badge/Android-Java-green) ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-An end-to-end machine learning system that identifies **102 flower species** from photos — trained using **Federated Learning** so data storage is distributed across clients instead of a central server — and deployed as an **Android app** with fully on-device inference. No internet required.
+An end-to-end machine learning system that identifies **102 flower species** from photos — trained using **Federated Learning** so data storage is distributed across clients instead of a central server — and deployed as an **Android app** with fully on-device inference. No internet required. *Accepted at ICAAIDT.*
 
 ---
 
 ## Why Federated Learning?
 
-Traditional ML requires storing the entire training dataset on a single server. As datasets grow into hundreds of gigabytes, this becomes expensive and hard to scale. FedFlower distributes both **data storage and training** across multiple clients — each client holds only its own subset, and the server never stores raw images.
+Traditional ML requires storing the entire training dataset on a single server. As datasets grow into hundreds of gigabytes, this becomes expensive, hard to scale, and impossible when data cannot be pooled for governance or connectivity reasons. FedFlower distributes both **data storage and training** across multiple clients — each client holds only its own subset, and the server never stores raw images.
 
 ```
 Centralized:                      Federated:
@@ -20,20 +20,29 @@ Centralized:                      Federated:
 
 ## Results
 
+All configurations use a **matched protocol**: the centralized baseline and the federated
+models are trained on the **same 2,040-image pool** and warm-started from the **same checkpoint**,
+so the comparison is fully apples-to-apples.
+
 | Configuration | Top-1 Accuracy | Macro F1 | Per-client storage |
 |---|---|---|---|
-| Centralized baseline | 87.92% | 0.8753 | 2,040 images |
-| Federated (5 clients, 10 rounds) | **91.82%** | **0.9159** | 408 images |
-| Federated (10 clients, 10 rounds) | 90.65% | 0.9050 | 204 images |
+| Centralized (2,040-image pool) | 94.06% | 0.938 | 2,040 images |
+| Federated, 5-client (IID) | **93.98% ± 0.05** | **0.938** | 408 images |
+| Federated, 10-client (IID) | 93.79% ± 0.06 | 0.936 | 204 images |
+| Federated, 5-client (non-IID, α=0.5) | 93.89% | 0.938 | ~408 images |
 
-> The federated model was **warm-started from the centralized checkpoint** and refined through 10 federated rounds, raising accuracy by +3.90 percentage points while reducing per-client storage to roughly one-fifth of the full pool.
+> **Key finding:** under a fair comparison, federated learning matches centralized accuracy to
+> **within 0.1 percentage point** — while each client stores only a fraction of the data, and the
+> result stays robust even under skewed, non-IID distributions. Federated values are the mean ± standard
+> deviation over 3 random seeds (42–44).
 
 ---
 
 ## App Performance
 
 - 📷 Camera or gallery input
-- ⚡ ~340 ms inference on Motorola Edge 50
+- ⚡ ~340 ms inference on a Motorola Edge 50 Neo (MediaTek Dimensity 7300)
+- 💾 ~98.8 MB model · ~306 MB peak RAM during inference
 - 🌸 Top-3 predictions with confidence scores
 - 🚫 "Flower not recognized" fallback below 35% confidence
 - 🔒 Fully offline — no data sent anywhere
@@ -42,7 +51,8 @@ Centralized:                      Federated:
 
 ## Model Architecture
 
-ResNet50 pretrained on ImageNet, with layers 1–3 frozen (generic features preserved) and layer 4 + custom head fine-tuned for flowers:
+ResNet50 pretrained on ImageNet, with the early stages frozen (generic features preserved) and
+layer 4 + a custom head fine-tuned for flowers:
 
 ```
 Linear(2048 → 512) → BatchNorm → ReLU → Dropout(0.4) → Linear(512 → 102)
@@ -56,8 +66,12 @@ Each communication round:
 1. Server sends the current global model to every client
 2. Each client trains it locally on **its own data** for 3 epochs
 3. Each client sends back only the **updated weights** (never raw images)
-4. Server computes the weighted average: `W_global = Σ (nᵢ/N) × Wᵢ`
+4. Server computes the size-weighted average: `W_global = Σ_{i=1..K} (nᵢ / n) × Wᵢ`
+   (K = clients, nᵢ = images on client i, n = total images)
 5. Repeat for 10 rounds
+
+The federated models are **warm-started** from the centralized checkpoint — clients refine a shared
+competent model rather than training from scratch, which also explains the strong robustness to non-IID data.
 
 ---
 
@@ -65,34 +79,38 @@ Each communication round:
 
 ```
 FedFlower/
+├── README.md
 ├── notebooks/
-│   ├── Phase1_Centralized_CNN.ipynb       ← ResNet50 baseline → 87.92%
-│   ├── Phase2_Federated_Learning.ipynb    ← FedAvg, 5- and 10-client
-│   ├── Phase3_Evaluation_GradCAM.ipynb    ← Confusion matrix, Grad-CAM
-│   └── Phase4_Model_Conversion.ipynb      ← Export to PyTorch Mobile
-├── android/
-│   └── app/src/main/
-│       ├── java/com/fedflower/app/MainActivity.java
-│       ├── assets/flower_traced.pt
-│       └── assets/flower_names.txt
+│   ├── Phase1_Centralized_CNN.ipynb          # fulltrain (2,040-image) version
+│   ├── Phase2_Federated_Learning.ipynb       # FedAvg + seeds + non-IID
+│   ├── Phase3_Evaluation_GradCAM.ipynb
+│   └── Phase4_Model_Conversion.ipynb
 ├── results/
-└── README.md
+│   ├── centralized_full_results.json
+│   ├── seed_results.json
+│   ├── noniid_results.json
+│   └── federated_results.json
+├── figures/                                  # confusion matrix, Grad-CAM, etc.
+└── android/                                  # Android app (if included)
 ```
+
+> Trained model files (`.pth` / `.pt`) and the dataset are not committed (large). The model is
+> regenerated by running the notebooks; alternatively it can be attached via GitHub Releases.
 
 ---
 
 ## How to Run
 
 ### Training (Google Colab)
-1. Open notebooks from this repo in Colab
-2. Runtime → T4 GPU
+1. Open the notebooks from this repo in Colab
+2. Runtime → Change runtime type → T4 GPU
 3. Run Phase 1 → 2 → 3 → 4
 4. Download `flower_traced.pt` after Phase 4
 
 ### Android App
 1. Open `android/` in Android Studio
-2. Connect your phone (USB debugging on)
-3. Click **Run**
+2. Copy `flower_traced.pt` into `app/src/main/assets/`
+3. Connect your phone (USB debugging on) → **Run**
 
 ---
 
@@ -103,30 +121,31 @@ FedFlower/
 | Deep Learning | PyTorch 2.1, torchvision |
 | Backbone | ResNet50 (ImageNet pretrained) |
 | Dataset | Oxford 102 Flowers (8,189 images, 102 species) |
-| Federated Algorithm | FedAvg (Federated Averaging) |
-| Mobile Deployment | PyTorch Mobile |
+| Federated Algorithm | FedAvg (Federated Averaging), IID + Dirichlet non-IID |
+| Interpretability | Grad-CAM |
+| Mobile Deployment | PyTorch Mobile (TorchScript) |
 | Android App | Java, Android Studio |
 
 ---
+
 ## Limitations & Future Work
 
-This implementation assumes each client holds a roughly similar
-distribution of flower classes. Real deployments won't look like this —
-contributors are tied to a region, garden, or collector, so each may hold
-an almost entirely different set of species. This causes severe **non-IID /
-label skew**, where some classes live on a single client. Under FedAvg this
-leads to client drift, slower convergence, and poor accuracy on rare classes.
+The federated models are **warm-started from a centralized checkpoint**, so the reported accuracies
+measure the refinement federated rounds add to a competent base model rather than federated training
+from random initialization. Because the validation split was merged into the training pool, model
+selection relied on final-round weights rather than a held-out validation set.
 
 Planned improvements:
 
-- **Handle non-IID data** — test under Dirichlet label partitions and swap
-  FedAvg for drift-aware aggregation (FedProx, SCAFFOLD, MOON).
-- **Personalization** — per-client fine-tuning so each contributor keeps a
-  model tuned to their local flora.
-- **Communication efficiency** — compress/quantize ResNet50 updates (~25M
-  params) for edge contributors.
+- **From-scratch federated baseline** — quantify federated learning without a centralized warm-start.
+- **Drift-aware aggregation** — evaluate FedProx, SCAFFOLD, or MOON under stronger label skew.
+- **Personalization** — per-client fine-tuning so each contributor keeps a model tuned to local flora.
+- **Communication efficiency** — compress/quantize ResNet50 updates (~25M params) for edge contributors.
 - **Privacy** — add secure aggregation + differential privacy.
 - **Open-set recognition** — flag unseen species instead of forcing a known label.
+
+> Note: a supplementary **non-IID experiment** (Dirichlet, α=0.5) is already included — the 5-client
+> model reached 93.89%, only ~0.1 point below IID, indicating the warm-start largely absorbs client skew.
 
 ## License
 
