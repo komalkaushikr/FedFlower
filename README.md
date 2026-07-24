@@ -81,8 +81,8 @@ competent model rather than training from scratch, which also explains the stron
 FedFlower/
 ├── README.md
 ├── notebooks/
-│   ├── Phase1_Centralized_CNN.ipynb          # fulltrain (2,040-image) version
-│   ├── Phase2_Federated_Learning.ipynb       # FedAvg + seeds + non-IID
+│   ├── Phase1_Centralized_CNN.ipynb          # also with fulltrain (2,040-image) version
+│   ├── Phase2_Federated_Learning.ipynb       # also with FedAvg + seeds + non-IID
 │   ├── Phase3_Evaluation_GradCAM.ipynb
 │   └── Phase4_Model_Conversion.ipynb
 ├── results/
